@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ATP Console</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pretendard:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+      body {
+        font-family: "Pretendard", "Inter", sans-serif;
+        background-color: #f8fafc;
+      }
+      .tab-content.hidden {
+        display: none;
+      }
+      .tool-creation-content.hidden {
+        display: none;
+      }
+      .form-input {
+        margin-top: 0.25rem;
+        display: block;
+        width: 100%;
+        border-radius: 0.375rem;
+        border: 1px solid #cbd5e1;
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        background-color: #ffffff;
+        padding: 0.5rem 0.75rem;
+        transition: all 150ms ease-in-out;
+      }
+      .form-input:focus {
+        border-color: #3b82f6;
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+      }
+      textarea.form-input {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+      }
+
+      #tab-nav button.active,
+      #tool-creation-nav button.active {
+        font-weight: 700;
+        color: #1d4ed8;
+        border-color: #2563eb;
+        background-color: #eff6ff;
+      }
+
+      .toggle-checkbox:checked {
+        border-color: #2563eb;
+        transform: translateX(1rem);
+        background-color: white;
+      }
+      .toggle-checkbox:checked + .toggle-label {
+        background-color: #2563eb;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen p-4 sm:p-6 lg:p-8 text-slate-800">
+    <div class="max-w-7xl mx-auto">
+      <header class="mb-8">
+        <h1 class="text-4xl font-normal text-slate-900 tracking-tight">
+          AIGENDRUG Tool Platform
+        </h1>
+        <p class="mt-2 text-lg text-slate-600">Management Console</p>
+      </header>
+
+      <div class="mb-6 border-b border-slate-200">
+        <nav class="flex -mb-px space-x-6" id="tab-nav">
+          <button
+            class="px-2 py-3 font-semibold text-slate-600 hover:text-blue-600 border-b-2 border-transparent transition-colors duration-200 active text-blue-600 border-blue-600"
+            data-tab="clients"
+          >
+            Registered Clients
+          </button>
+          <button
+            class="px-2 py-3 font-semibold text-slate-600 hover:text-blue-600 border-b-2 border-transparent transition-colors duration-200"
+            data-tab="tools"
+          >
+            Tool Management
+          </button>
+          <button
+            class="px-2 py-3 font-semibold text-slate-600 hover:text-blue-600 border-b-2 border-transparent transition-colors duration-200"
+            data-tab="permissions"
+          >
+            Permissions
+          </button>
+          <button
+            class="px-2 py-3 font-semibold text-slate-600 hover:text-blue-600 border-b-2 border-transparent transition-colors duration-200"
+            data-tab="requests"
+          >
+            Tool Requests
+          </button>
+        </nav>
+      </div>
+
+      <div id="tab-content-container">
+        <div id="tab-clients" class="tab-content">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-slate-900">Client List</h2>
+            <div class="flex gap-4">
+              <button
+                id="createClientBtn"
+                class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Create Client
+              </button>
+              <button
+                id="loadBtn"
+                class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="w-5 h-5"
+                >
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g
+                    id="SVGRepo_tracerCarrier"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M4.06189 13C4.02104 12.6724 4 12.3387 4 12C4 7.58172 7.58172 4 12 4C14.5006 4 16.7332 5.14727 18.2002 6.94416M19.9381 11C19.979 11.3276 20 11.6613 20 12C20 16.4183 16.4183 20 12 20C9.61061 20 7.46589 18.9525 6 17.2916M9 17H6V17.2916M18.2002 4V6.94416M18.2002 6.94416V6.99993L15.2002 7M6 20V17.2916"
+                      stroke="#ffffff"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></path>
+                  </g>
+                </svg>
+                Load Clients
+              </button>
+            </div>
+          </div>
+
+          <!-- Create Client Modal -->
+          <div id="createClientModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-xl p-6 w-full max-w-md">
+              <h3 class="text-xl font-semibold text-slate-900 mb-4">Create New Client</h3>
+              <form id="createClientForm" class="space-y-4">
+                <div>
+                  <label for="clientName" class="block text-sm font-medium text-slate-700">Client Name</label>
+                  <input type="text" id="clientName" class="form-input" required>
+                </div>
+                <div>
+                  <label for="clientIdentifier" class="block text-sm font-medium text-slate-700">Client Identifier</label>
+                  <input type="text" id="clientIdentifier" class="form-input" required>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                  <button type="button" onclick="closeCreateClientModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-800">Cancel</button>
+                  <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Create</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <ul id="clientList" class="space-y-4">
+            <li
+              class="text-center text-slate-500 py-10 bg-white rounded-xl border border-dashed"
+            >
+              Click 'Load Clients' to start.
+            </li>
+          </ul>
+        </div>
+
+        <div id="tab-tools" class="tab-content hidden">
+          <div class="mb-10">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-3xl font-bold text-slate-900">Tool List</h2>
+              <button
+                id="loadToolsBtn"
+                class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="w-5 h-5"
+                >
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g
+                    id="SVGRepo_tracerCarrier"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M4.06189 13C4.02104 12.6724 4 12.3387 4 12C4 7.58172 7.58172 4 12 4C14.5006 4 16.7332 5.14727 18.2002 6.94416M19.9381 11C19.979 11.3276 20 11.6613 20 12C20 16.4183 16.4183 20 12 20C9.61061 20 7.46589 18.9525 6 17.2916M9 17H6V17.2916M18.2002 4V6.94416M18.2002 6.94416V6.99993L15.2002 7M6 20V17.2916"
+                      stroke="#ffffff"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></path>
+                  </g>
+                </svg>
+                Load Tools
+              </button>
+            </div>
+            <ul id="toolList" class="space-y-4 max-h-[500px] overflow-y-auto">
+              <li
+                class="text-center text-slate-500 py-10 bg-white rounded-xl border border-dashed"
+              >
+                Click 'Load Tools' to start.
+              </li>
+            </ul>
+          </div>
+
+          <div class="border-t my-10 border-slate-200"></div>
+
+          <h2 class="text-3xl font-bold mb-6 text-slate-900">
+            Create a New Tool
+          </h2>
+
+          <div class="mb-4 border-b border-slate-200">
+            <nav class="flex -mb-px space-x-6" id="tool-creation-nav">
+              <button
+                class="px-2 py-3 font-semibold text-slate-600 hover:text-blue-600 border-b-2 border-transparent transition-colors duration-200 active text-blue-600 border-blue-600"
+                data-tool-tab="fine-grained"
+              >
+                Fine-Grained Form
+              </button>
+              <button
+                class="px-2 py-3 font-semibold text-slate-600 hover:text-blue-600 border-b-2 border-transparent transition-colors duration-200"
+                data-tool-tab="json"
+              >
+                JSON Input
+              </button>
+            </nav>
+          </div>
+
+          <div id="tool-tab-fine-grained" class="tool-creation-content">
+            <form id="create-tool-form" class="space-y-8">
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-slate-200"
+              >
+                <h3
+                  class="text-xl font-semibold mb-6 text-slate-800 border-b pb-3"
+                >
+                  Basic Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label
+                      for="tool-name"
+                      class="block text-sm font-medium text-slate-700"
+                      >Name</label
+                    >
+                    <input
+                      type="text"
+                      id="tool-name"
+                      class="form-input"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="tool-version"
+                      class="block text-sm font-medium text-slate-700"
+                      >Version</label
+                    >
+                    <input
+                      type="text"
+                      id="tool-version"
+                      class="form-input"
+                      value="1.0.0"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="mt-6">
+                  <label
+                    for="tool-description"
+                    class="block text-sm font-medium text-slate-700"
+                    >Description</label
+                  >
+                  <textarea
+                    id="tool-description"
+                    class="form-input"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-slate-200"
+              >
+                <h3
+                  class="text-xl font-semibold mb-6 text-slate-800 border-b pb-3"
+                >
+                  Engine Interface
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700"
+                      >Type</label
+                    >
+                    <select
+                      class="form-input engine-interface"
+                      data-key="engine_interface_type"
+                      required
+                    >
+                      <option>aws-lambda</option>
+                      <option>http-server</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700"
+                      >Invoke Type</label
+                    >
+                    <select
+                      class="form-input engine-interface"
+                      data-key="engine_interface_invoke_type"
+                      required
+                    >
+                      <option>sync-wait</option>
+                      <option>async-event</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700"
+                      >Check Status Type</label
+                    >
+                    <select
+                      class="form-input engine-interface"
+                      data-key="engine_interface_check_status_type"
+                      required
+                    >
+                      <option>none</option>
+                      <option>delayed</option>
+                      <option>poll-http</option>
+                      <option>aws-s3-trigger</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mt-6">
+                  <label class="block text-sm font-medium text-slate-700"
+                    >Engine Implementation</label
+                  >
+                  <p class="text-xs text-slate-500 mt-1">
+                    Define the backend implementation details. Required fields
+                    will update based on the selections above.
+                  </p>
+                  <div id="engine-impl-container" class="mt-2 space-y-4">
+                    <div id="engine-impl-recommended-fields" class="space-y-4">
+                      <!-- Recommended fields will be inserted here -->
+                    </div>
+                    <div class="border-t border-slate-200 pt-4 mt-4">
+                      <h4 class="text-sm font-medium text-slate-700 mb-2">
+                        Custom Fields
+                      </h4>
+                      <div id="engine-impl-custom-fields" class="space-y-3">
+                        <!-- Custom fields will be inserted here -->
+                      </div>
+                      <button
+                        type="button"
+                        id="add-engine-impl-field"
+                        class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition mt-3"
+                      >
+                        + Add Custom Field
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-slate-200"
+              >
+                <h3
+                  class="text-xl font-semibold mb-6 text-slate-800 border-b pb-3"
+                >
+                  Provider Interface
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700"
+                      >URL</label
+                    >
+                    <input
+                      type="text"
+                      class="form-input provider-interface"
+                      data-key="url"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700"
+                      >Auth Strategy</label
+                    >
+                    <input
+                      type="text"
+                      class="form-input provider-interface"
+                      data-key="authStrategy"
+                      value="none"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700"
+                      >Request Method</label
+                    >
+                    <select
+                      class="form-input provider-interface"
+                      data-key="requestMethod"
+                      required
+                    >
+                      <option>POST</option>
+                      <option>GET</option>
+                      <option>PUT</option>
+                      <option>DELETE</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700"
+                      >Request Content Type</label
+                    >
+                    <input
+                      type="text"
+                      class="form-input provider-interface"
+                      data-key="requestContentType"
+                      value="application/json"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700"
+                      >Response Content Type</label
+                    >
+                    <input
+                      type="text"
+                      class="form-input provider-interface"
+                      data-key="responseContentType"
+                      value="application/json"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="mt-8">
+                  <div class="flex justify-between items-center">
+                    <h4 class="text-lg font-medium text-slate-700">
+                      Request Interface
+                    </h4>
+                    <button
+                      type="button"
+                      id="add-request-param"
+                      class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition"
+                    >
+                      + Add Parameter
+                    </button>
+                  </div>
+                  <div
+                    id="request-interface-container"
+                    class="mt-4 space-y-4"
+                  ></div>
+                </div>
+
+                <div class="mt-8">
+                  <div class="flex justify-between items-center">
+                    <h4 class="text-lg font-medium text-slate-700">
+                      Response Interface
+                    </h4>
+                    <button
+                      type="button"
+                      id="add-response-param"
+                      class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition"
+                    >
+                      + Add Parameter
+                    </button>
+                  </div>
+                  <div
+                    id="response-interface-container"
+                    class="mt-4 space-y-4"
+                  ></div>
+                </div>
+              </div>
+
+              <div class="pt-5">
+                <button
+                  type="submit"
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-5 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+                >
+                  Create Tool
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div id="tool-tab-json" class="tool-creation-content hidden">
+            <form id="create-tool-from-json-form">
+              <div
+                class="bg-white p-6 rounded-xl shadow-md border border-slate-200"
+              >
+                <h3 class="text-xl font-semibold text-slate-800">
+                  Create from JSON
+                </h3>
+                <p class="text-slate-600 my-4">
+                  Paste the tool's JSON definition below.
+                </p>
+                <textarea
+                  id="tool-json-input"
+                  class="font-mono text-sm mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition bg-slate-50"
+                  rows="20"
+                ></textarea>
+                <div class="pt-5 mt-4">
+                  <button
+                    type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-5 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+                  >
+                    Create Tool from JSON
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="tab-permissions" class="tab-content hidden">
+          <div
+            class="bg-white p-6 rounded-xl shadow-md border border-slate-200"
+          >
+            <h2 class="text-3xl font-bold text-slate-900">
+              Manage Client Permissions
+            </h2>
+            <p class="mt-2 text-slate-600">
+              Select a client to manage their tool permissions.
+            </p>
+
+            <div class="mt-6">
+              <label
+                for="permission-client-select"
+                class="block text-sm font-medium text-slate-700"
+                >Select Client</label
+              >
+              <select id="permission-client-select" class="form-input"></select>
+            </div>
+
+            <div
+              id="permissions-management-area"
+              class="hidden mt-8 border-t border-slate-200 pt-6"
+            >
+              <div class="flex justify-between items-center">
+                <h3 class="text-xl font-semibold text-slate-800">
+                  Assign Permissions
+                </h3>
+                <div class="flex items-center gap-4">
+                  <label
+                    for="permission-level-select"
+                    class="text-sm font-medium text-slate-700"
+                    >Permission Level:</label
+                  >
+                  <select id="permission-level-select" class="form-input py-2">
+                    <option value="0">0: None</option>
+                    <option value="1">1: Read</option>
+                    <option value="2">2: Write</option>
+                  </select>
+                  <button
+                    id="save-permissions-btn"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-sm transition-all"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+
+              <div class="mt-4 border rounded-lg max-h-[400px] overflow-y-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                  <thead class="bg-slate-50 sticky top-0">
+                    <tr>
+                      <th class="w-12 px-4 py-3 text-left">
+                        <input
+                          type="checkbox"
+                          id="select-all-tools-checkbox"
+                          class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500"
+                        />
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
+                      >
+                        Tool Name
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
+                      >
+                        Current Permission
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="permissions-tool-list"
+                    class="bg-white divide-y divide-slate-200"
+                  >
+                    <!-- Tool list will be populated here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-requests" class="tab-content hidden">
+          <div
+            class="bg-white p-6 rounded-xl shadow-md border border-slate-200"
+          >
+            <h2 class="text-3xl font-bold text-slate-900">Tool Requests</h2>
+            <p class="mt-2 text-slate-600">
+              Browse and manage historical tool requests.
+            </p>
+
+            <div class="mt-6 flex items-end gap-4 p-4 bg-slate-50 rounded-lg">
+              <div>
+                <label
+                  for="request-filter-by"
+                  class="block text-sm font-medium text-slate-700"
+                  >Filter By</label
+                >
+                <select id="request-filter-by" class="form-input">
+                  <option value="client">Client</option>
+                  <option value="tool">Tool</option>
+                </select>
+              </div>
+              <div id="request-filter-value-container">
+                <!-- Dynamic select will go here -->
+              </div>
+              <button
+                id="load-requests-btn"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-sm transition-all"
+              >
+                Load Requests
+              </button>
+            </div>
+
+            <div id="tool-requests-list" class="mt-6 space-y-4">
+              <div
+                class="text-center text-slate-500 py-10 border border-dashed rounded-xl"
+              >
+                Select a filter and click 'Load Requests' to start.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const sampleToolJson = {
+        version: "1.0.0",
+        name: "Calculator",
+        description:
+          "Performs a basic arithmetic operation between two numbers.",
+        engine_interface: {
+          engine_interface_type: "aws-lambda",
+          engine_interface_invoke_type: "sync-wait",
+          engine_interface_check_status_type: "none",
+          engine_impl: {
+            function_name: "tool-calculator",
+          },
+        },
+        provider_interface: {
+          url: "https://sample-tool-server.com",
+          authStrategy: "none",
+          requestMethod: "POST",
+          requestContentType: "application/json",
+          responseContentType: "application/json",
+          requestInterface: [
+            {
+              id: "number1",
+              type: "body",
+              required: true,
+              key: "number1",
+              valueType: "number",
+              bindedElementType: {
+                label: "First Number",
+                htmlElementType: "input-number",
+                valueType: "number",
+              },
+            },
+            {
+              id: "number2",
+              type: "body",
+              required: true,
+              key: "number2",
+              valueType: "number",
+              bindedElementType: {
+                label: "Second Number",
+                htmlElementType: "input-number",
+                valueType: "number",
+              },
+            },
+            {
+              id: "operation",
+              type: "body",
+              required: true,
+              key: "operation",
+              valueType: "string",
+              bindedElementType: {
+                label: "Operation (+, -, *, /)",
+                htmlElementType: "input-text",
+                valueType: "string",
+              },
+            },
+          ],
+          responseInterface: [
+            {
+              id: "result",
+              type: "body",
+              key: "result",
+              valueType: "number",
+              bindedElementType: {
+                label: "Result",
+                htmlElementType: "input-number",
+                valueType: "number",
+              },
+            },
+          ],
+        },
+      };
+
+      function setupTabSwitcher(
+        navSelector,
+        contentSelector,
+        idBuilder,
+        dataAttribute
+      ) {
+        const nav = document.querySelector(navSelector);
+        if (!nav) return;
+
+        nav.addEventListener("click", (e) => {
+          const button = e.target.closest("button");
+          if (!button || !button.hasAttribute(dataAttribute)) return;
+
+          const tabId = button.getAttribute(dataAttribute);
+
+          nav.querySelectorAll("button").forEach((btn) => {
+            btn.classList.remove("active", "text-blue-600", "border-blue-600");
+          });
+          button.classList.add("active", "text-blue-600", "border-blue-600");
+
+          document.querySelectorAll(contentSelector).forEach((content) => {
+            content.classList.add("hidden");
+          });
+
+          const targetPaneId = idBuilder(tabId);
+          const targetPane = document.getElementById(targetPaneId);
+          if (targetPane) targetPane.classList.remove("hidden");
+        });
+      }
+
+      setupTabSwitcher(
+        "#tab-nav",
+        ".tab-content",
+        (id) => `tab-${id}`,
+        "data-tab"
+      );
+      setupTabSwitcher(
+        "#tool-creation-nav",
+        ".tool-creation-content",
+        (id) => `tool-tab-${id}`,
+        "data-tool-tab"
+      );
+
+      document.getElementById("loadBtn").addEventListener("click", async () => {
+        try {
+          const res = await fetch("/v1/clients");
+          if (!res.ok)
+            throw new Error(`Failed to fetch clients: ${res.statusText}`);
+          const clients = await res.json();
+          const listEl = document.getElementById("clientList");
+          listEl.innerHTML = "";
+
+          if (!clients || clients.length === 0) {
+            listEl.innerHTML = `<li class="text-center text-slate-500 py-10 bg-white rounded-xl border border-dashed">No clients found.</li>`;
+            return;
+          }
+
+          clients.forEach((client) => {
+            const li = document.createElement("li");
+            li.className = "bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:border-blue-400 transition-all duration-200";
+
+            li.innerHTML = `
+              <div class="flex justify-between items-start">
+                  <div class="flex-1">
+                    <p class="text-xl font-semibold text-slate-800">${client.name}</p>
+                    <div class="mt-2 space-y-1 text-sm text-slate-600">
+                      <p>
+                        <span class="font-semibold text-slate-500">ID:</span> 
+                        <span class="font-mono text-slate-800">${client.id}</span>
+                      </p>
+                       <p>
+                        <span class="font-semibold text-slate-500">Identifier:</span> 
+                        <span class="font-mono text-slate-800">${client.client_identifier}</span>
+                      </p>
+                      <p class="text-xs text-slate-400 mt-2">
+                        <span class="font-semibold">Created:</span> ${new Date(client.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="ml-4 flex items-center gap-4">
+                    <button onclick="toggleEditClientView(${client.id})" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors" title="Edit Client">
+                      Edit
+                    </button>
+                    <button onclick="toggleApiKeysView(${client.id})" class="text-sm font-semibold text-blue-600 hover:underline">
+                      Manage API Keys
+                    </button>
+                    <span class="text-xs px-3 py-1 rounded-full font-bold ${client.is_active ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'}">
+                      ${client.is_active ? 'ACTIVE' : 'INACTIVE'}
+                    </span>
+                  </div>
+              </div>
+              <div id="api-keys-container-${client.id}" class="hidden mt-4 pt-4 border-t border-slate-200">
+                  <!-- API Keys will be loaded here -->
+              </div>
+              <div id="edit-client-container-${client.id}" class="hidden mt-4 pt-4 border-t border-slate-200">
+                  <!-- Edit form will be loaded here -->
+              </div>
+            `;
+            listEl.appendChild(li);
+          });
+        } catch (err) {
+          alert("Error: " + err.message);
+        }
+      });
+
+      document.getElementById('createClientForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('clientName').value;
+        const identifier = document.getElementById('clientIdentifier').value;
+
+        try {
+          const res = await fetch('/v1/clients', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, client_identifier: identifier })
+          });
+          
+          if (!res.ok) {
+              const errorData = await res.json();
+              throw new Error(errorData.Msg || `Request failed with status ${res.status}`);
+          }
+          
+          closeCreateClientModal();
+          document.getElementById('loadBtn').click();
+          alert('Client created successfully!');
+        } catch (err) {
+          alert('Error creating client: ' + err.message);
+        }
+      });
+
+      document
+        .getElementById("loadToolsBtn")
+        .addEventListener("click", async () => {
+          try {
+            const res = await fetch("/v1/tools");
+            if (!res.ok)
+              throw new Error(`Failed to fetch tools: ${res.statusText}`);
+            const tools = await res.json();
+            const listEl = document.getElementById("toolList");
+            listEl.innerHTML = "";
+
+            if (!tools || tools.length === 0) {
+              listEl.innerHTML = `<li class="text-center text-slate-500 py-10 bg-white rounded-xl border border-dashed">No tools found.</li>`;
+              return;
+            }
+
+            tools.forEach((tool, index) => {
+              const li = document.createElement("li");
+              li.className =
+                "bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:border-blue-400 transition-all duration-200";
+              li.innerHTML = `
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-xl font-semibold text-slate-800">${tool.name} 
+                    <span class="text-base font-normal text-slate-500">v${
+                      tool.version
+                    }</span>
+                  </p>
+                  <p class="text-slate-600 mt-1">${tool.description}</p>
+                  <p class="text-sm text-slate-500 mt-2">
+                    <span class="font-semibold">UUID:</span> <span class="font-mono">${
+                      tool.uuid
+                    }</span>
+                  </p>
+                </div>
+                <div>
+                    <button class="text-sm font-semibold text-blue-600 hover:underline mr-4" onclick="toggleToolDetails('tool-details-${index}')">View Details</button>
+                    <button class="text-sm font-semibold text-red-600 hover:underline" onclick="deleteTool(${
+                      tool.id
+                    })">Delete</button>
+                </div>
+              </div>
+              <div id="tool-details-${index}" class="hidden mt-4 pt-4 border-t border-slate-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-slate-700 mb-2">Engine Interface</h4>
+                        <pre class="bg-slate-100 rounded-lg p-3 text-xs font-mono overflow-auto">${JSON.stringify(
+                          tool.engine_interface,
+                          null,
+                          2
+                        )}</pre>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-700 mb-2">Provider Interface</h4>
+                        <pre class="bg-slate-100 rounded-lg p-3 text-xs font-mono overflow-auto">${JSON.stringify(
+                          tool.provider_interface,
+                          null,
+                          2
+                        )}</pre>
+                    </div>
+                </div>
+              </div>`;
+              listEl.appendChild(li);
+            });
+          } catch (err) {
+            alert("Error: " + err.message);
+          }
+        });
+
+      function toggleToolDetails(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle("hidden");
+      }
+
+      async function deleteTool(toolId) {
+        if (!confirm("Are you sure you want to delete this tool?")) {
+          return;
+        }
+
+        try {
+          const res = await fetch(`/v1/tools/${toolId}`, {
+            method: "DELETE",
+          });
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(
+              errorData.Msg || `Request failed with status ${res.status}`
+            );
+          }
+          alert("Tool deleted successfully!");
+          document.getElementById("loadToolsBtn").click();
+        } catch (err) {
+          alert(`Error deleting tool: ${err.message}`);
+        }
+      }
+
+      const jsonInputEl = document.getElementById("tool-json-input");
+      jsonInputEl.value = JSON.stringify(sampleToolJson, null, 2);
+
+      document
+        .getElementById("create-tool-from-json-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          try {
+            const toolData = JSON.parse(jsonInputEl.value);
+            await createTool(toolData);
+          } catch (err) {
+            alert("JSON Parsing Error: " + err.message);
+          }
+        });
+
+      document
+        .getElementById("create-tool-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          try {
+            const toolData = buildToolDataFromForm();
+            await createTool(toolData);
+          } catch (err) {
+            alert("Form Error: " + err.message);
+          }
+        });
+
+      async function createTool(toolData) {
+        try {
+          const res = await fetch("/v1/tools", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(toolData),
+          });
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(
+              errorData.Msg || `Request failed with status ${res.status}`
+            );
+          }
+          const createdTool = await res.json();
+          alert(`Tool "${createdTool.name}" created successfully!`);
+          document.getElementById("create-tool-form").reset();
+          document.getElementById("request-interface-container").innerHTML = "";
+          document.getElementById("response-interface-container").innerHTML =
+            "";
+          document.getElementById("loadToolsBtn").click();
+        } catch (err) {
+          alert(`Error creating tool: ${err.message}`);
+        }
+      }
+
+      function buildToolDataFromForm() {
+        const data = {
+          name: document.getElementById("tool-name").value,
+          version: document.getElementById("tool-version").value,
+          description: document.getElementById("tool-description").value,
+          engine_interface: {},
+          provider_interface: { requestInterface: [], responseInterface: [] },
+        };
+
+        document.querySelectorAll(".engine-interface").forEach((input) => {
+          data.engine_interface[input.dataset.key] = input.value;
+        });
+
+        data.engine_interface.engine_impl = {};
+        document
+          .querySelectorAll(
+            "#engine-impl-recommended-fields .engine-impl-field"
+          )
+          .forEach((field) => {
+            const key = field.dataset.key;
+            const value = field.value;
+            if (key && value !== "") {
+              if (field.type === "number") {
+                const numValue = parseFloat(value);
+                if (!isNaN(numValue)) {
+                  data.engine_interface.engine_impl[key] = numValue;
+                }
+              } else {
+                data.engine_interface.engine_impl[key] = value;
+              }
+            }
+          });
+        document
+          .querySelectorAll(
+            "#engine-impl-custom-fields .custom-engine-impl-field"
+          )
+          .forEach((field) => {
+            const keyInput = field.querySelector('input[placeholder="Key"]');
+            const valueInput = field.querySelector(
+              'input[placeholder="Value"]'
+            );
+            if (keyInput && valueInput && keyInput.value && valueInput.value) {
+              data.engine_interface.engine_impl[keyInput.value] =
+                valueInput.value;
+            }
+          });
+
+        document.querySelectorAll(".provider-interface").forEach((input) => {
+          data.provider_interface[input.dataset.key] = input.value;
+        });
+
+        data.provider_interface.requestInterface = buildInterfaceElements(
+          "#request-interface-container"
+        );
+        data.provider_interface.responseInterface = buildInterfaceElements(
+          "#response-interface-container"
+        );
+
+        return data;
+      }
+
+      function buildInterfaceElements(containerSelector) {
+        const container = document.querySelector(containerSelector);
+        const elements = [];
+        container.querySelectorAll(".interface-element").forEach((el) => {
+          elements.push({
+            id: el.querySelector('[data-key="id"]').value,
+            type: el.querySelector('[data-key="type"]').value,
+            required: el.querySelector('[data-key="required"]').checked,
+            key: el.querySelector('[data-key="key"]').value,
+            valueType: el.querySelector('[data-key="valueType"]').value,
+            bindedElementType: {
+              label: el.querySelector('[data-key="binded_label"]').value,
+              htmlElementType: el.querySelector(
+                '[data-key="binded_htmlElementType"]'
+              ).value,
+              valueType: el.querySelector('[data-key="binded_valueType"]')
+                .value,
+            },
+          });
+        });
+        return elements;
+      }
+
+      let paramCounter = 0;
+      function addInterfaceParam(containerSelector, type) {
+        paramCounter++;
+        const container = document.querySelector(containerSelector);
+        const div = document.createElement("div");
+        div.className =
+          "interface-element border rounded-lg p-4 space-y-3 bg-slate-50 border-slate-200";
+        div.innerHTML = `
+            <div class="flex justify-end">
+              <button type="button" class="text-sm font-semibold text-red-500 hover:text-red-700" onclick="this.closest('.interface-element').remove()">Remove</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><label class="block text-sm font-medium text-slate-700">ID</label><input type="text" data-key="id" class="form-input" value="${type}-param-${paramCounter}"></div>
+              <div><label class="block text-sm font-medium text-slate-700">Key</label><input type="text" data-key="key" class="form-input"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 items-center">
+              <div><label class="block text-sm font-medium text-slate-700">Type</label><select data-key="type" class="form-input"><option>body</option><option>query</option><option>header</option></select></div>
+              <div><label class="block text-sm font-medium text-slate-700">Value Type</label><select data-key="valueType" class="form-input"><option>string</option><option>number</option><option>boolean</option></select></div>
+              <div class="pt-6"><label class="flex items-center gap-2"><input type="checkbox" data-key="required" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500"> <span class="text-sm font-medium text-slate-700">Required</span></label></div>
+            </div>
+            <fieldset class="border-t border-slate-200 pt-3 mt-3">
+              <legend class="text-sm font-semibold text-slate-600">UI Binding</legend>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                <div><label class="text-xs font-medium text-slate-600">Label</label><input type="text" data-key="binded_label" class="form-input text-sm"></div>
+                <div>
+                  <label class="text-xs font-medium text-slate-600">HTML Type</label>
+                  <select data-key="binded_htmlElementType" class="form-input text-sm">
+                    <option>input-text</option><option>input-number</option><option>textarea</option><option>checkbox</option><option>select</option>
+                  </select>
+                </div>
+                <div><label class="text-xs font-medium text-slate-600">Value Type</label><select data-key="binded_valueType" class="form-input text-sm"><option>string</option><option>number</option><option>boolean</option></select></div>
+              </div>
+            </fieldset>
+          `;
+        container.appendChild(div);
+      }
+      document
+        .getElementById("add-request-param")
+        .addEventListener("click", () =>
+          addInterfaceParam("#request-interface-container", "request")
+        );
+      document
+        .getElementById("add-response-param")
+        .addEventListener("click", () =>
+          addInterfaceParam("#response-interface-container", "response")
+        );
+
+      const engineImplFieldsConfig = {
+        by_engine_type: {
+          "aws-lambda": [
+            {
+              key: "function_name",
+              placeholder: "e.g., my-lambda-function",
+              label: "AWS Lambda Function Name",
+            },
+          ],
+          "http-server": [
+            {
+              key: "url",
+              placeholder: "e.g., https://api.my-service.com/invoke",
+              label: "HTTP Invoke URL",
+            },
+          ],
+        },
+        by_check_status_type: {
+          delayed: [
+            {
+              key: "delay_seconds",
+              placeholder: "e.g., 30",
+              label: "Delay in Seconds",
+              valueType: "number",
+            },
+          ],
+          "poll-http": [
+            {
+              key: "status_url",
+              placeholder:
+                "e.g., https://api.my-service.com/status/{request_id}",
+              label: "HTTP Status Poll URL",
+            },
+          ],
+          "aws-s3-trigger": [
+            {
+              key: "aws_s3_bucket",
+              placeholder: "e.g., my-tool-results-bucket",
+              label: "S3 Bucket Name",
+            },
+            {
+              key: "aws_s3_key",
+              placeholder: "e.g., results/{request_id}.json",
+              label: "S3 Key Path",
+            },
+          ],
+        },
+      };
+
+      function updateEngineImplFields() {
+        const engineType = document.querySelector(
+          '[data-key="engine_interface_type"]'
+        ).value;
+        const checkStatusType = document.querySelector(
+          '[data-key="engine_interface_check_status_type"]'
+        ).value;
+        const container = document.getElementById(
+          "engine-impl-recommended-fields"
+        );
+        container.innerHTML = "";
+
+        let fields = [];
+        if (engineImplFieldsConfig.by_engine_type[engineType]) {
+          fields.push(...engineImplFieldsConfig.by_engine_type[engineType]);
+        }
+        if (engineImplFieldsConfig.by_check_status_type[checkStatusType]) {
+          fields.push(
+            ...engineImplFieldsConfig.by_check_status_type[checkStatusType]
+          );
+        }
+
+        fields.forEach((field) => {
+          const div = document.createElement("div");
+          const inputType = field.valueType === "number" ? "number" : "text";
+          div.innerHTML = `
+            <label class="block text-xs font-medium text-slate-600 mb-1">${field.label}</label>
+            <input type="${inputType}"
+                   class="form-input engine-impl-field"
+                   data-key="${field.key}"
+                   placeholder="${field.placeholder}"
+                   required />
+        `;
+          container.appendChild(div);
+        });
+      }
+
+      function addCustomEngineImplField() {
+        const container = document.getElementById("engine-impl-custom-fields");
+        const div = document.createElement("div");
+        div.className = "flex items-center gap-2 custom-engine-impl-field";
+        div.innerHTML = `
+              <input type="text" class="form-input w-1/3" placeholder="Key">
+              <span class="text-slate-500">:</span>
+              <input type="text" class="form-input" placeholder="Value">
+              <button type="button" class="text-sm font-semibold text-red-500 hover:text-red-700" onclick="this.closest('.custom-engine-impl-field').remove()">Remove</button>
+          `;
+        container.appendChild(div);
+      }
+
+      document
+        .getElementById("add-engine-impl-field")
+        .addEventListener("click", addCustomEngineImplField);
+
+      const engineTypeSelect = document.querySelector(
+        '[data-key="engine_interface_type"]'
+      );
+      const checkStatusTypeSelect = document.querySelector(
+        '[data-key="engine_interface_check_status_type"]'
+      );
+
+      engineTypeSelect.addEventListener("change", updateEngineImplFields);
+      checkStatusTypeSelect.addEventListener("change", updateEngineImplFields);
+
+      updateEngineImplFields();
+
+      const clientSelect = document.getElementById("permission-client-select");
+      const permissionsArea = document.getElementById(
+        "permissions-management-area"
+      );
+      const toolListBody = document.getElementById("permissions-tool-list");
+      const saveBtn = document.getElementById("save-permissions-btn");
+      const permissionLevelSelect = document.getElementById(
+        "permission-level-select"
+      );
+      const selectAllCheckbox = document.getElementById(
+        "select-all-tools-checkbox"
+      );
+
+      let allTools = [];
+      let currentClientPermissions = [];
+
+      async function initializePermissionsTab() {
+        clientSelect.innerHTML = `<option>Loading clients...</option>`;
+        try {
+          const res = await fetch("/v1/clients");
+          if (!res.ok) throw new Error("Failed to load clients");
+          const clients = await res.json();
+          clientSelect.innerHTML = `<option value="">-- Select a Client --</option>`;
+          clients.forEach((client) => {
+            const option = document.createElement("option");
+            option.value = client.id;
+            option.textContent = `${client.name} (ID: ${client.id})`;
+            clientSelect.appendChild(option);
+          });
+        } catch (err) {
+          clientSelect.innerHTML = `<option>Error loading clients</option>`;
+          alert(err.message);
+        }
+
+        try {
+          const res = await fetch("/v1/tools");
+          if (!res.ok) throw new Error("Failed to load tools");
+          allTools = await res.json();
+        } catch (err) {
+          alert(err.message);
+        }
+      }
+
+      clientSelect.addEventListener("change", async (e) => {
+        const clientId = e.target.value;
+        if (!clientId) {
+          permissionsArea.classList.add("hidden");
+          return;
+        }
+
+        toolListBody.innerHTML =
+          '<tr><td colspan="3" class="text-center p-4">Loading permissions...</td></tr>';
+        permissionsArea.classList.remove("hidden");
+
+        try {
+          const res = await fetch(`/v1/tool-permissions/client/${clientId}`);
+          if (!res.ok) throw new Error("Failed to load permissions for client");
+          currentClientPermissions = await res.json();
+          renderToolPermissions();
+        } catch (err) {
+          alert(err.message);
+          toolListBody.innerHTML =
+            '<tr><td colspan="3" class="text-center p-4 text-red-500">Error loading permissions.</td></tr>';
+        }
+      });
+
+      function getPermissionLevelText(level) {
+        switch (level) {
+          case 1:
+            return "1: Read";
+          case 2:
+            return "2: Write";
+          default:
+            return "0: None";
+        }
+      }
+
+      function renderToolPermissions() {
+        toolListBody.innerHTML = "";
+        if (allTools.length === 0) {
+          toolListBody.innerHTML =
+            '<tr><td colspan="3" class="text-center p-4">No tools found.</td></tr>';
+          return;
+        }
+
+        allTools.forEach((tool) => {
+          const permission = currentClientPermissions.find(
+            (p) => p.tool_id === tool.id
+          );
+          const currentLevel = permission ? permission.permission_level : 0;
+
+          const row = document.createElement("tr");
+          row.className = "hover:bg-slate-50";
+          row.innerHTML = `
+                <td class="px-4 py-4">
+                  <input type="checkbox" class="tool-permission-checkbox rounded h-4 w-4 text-blue-600 focus:ring-blue-500" data-tool-id="${
+                    tool.id
+                  }">
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-slate-900">${
+                    tool.name
+                  }</div>
+                  <div class="text-xs text-slate-500">v${tool.version}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">
+                    <span class="font-mono" id="current-perm-tool-${
+                      tool.id
+                    }">${getPermissionLevelText(currentLevel)}</span>
+                </td>
+              `;
+          toolListBody.appendChild(row);
+        });
+      }
+
+      selectAllCheckbox.addEventListener("change", (e) => {
+        const checkboxes = document.querySelectorAll(
+          ".tool-permission-checkbox"
+        );
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = e.target.checked;
+        });
+      });
+
+      saveBtn.addEventListener("click", async () => {
+        const clientId = clientSelect.value;
+        const permissionLevel = parseInt(permissionLevelSelect.value, 10);
+        const selectedToolIds = Array.from(
+          document.querySelectorAll(".tool-permission-checkbox:checked")
+        ).map((cb) => parseInt(cb.dataset.toolId, 10));
+
+        if (!clientId || selectedToolIds.length === 0) {
+          alert("Please select a client and at least one tool.");
+          return;
+        }
+
+        const promises = [];
+
+        selectedToolIds.forEach((toolId) => {
+          const existingPermission = currentClientPermissions.find(
+            (p) => p.tool_id === toolId
+          );
+
+          if (existingPermission) {
+            if (existingPermission.permission_level !== permissionLevel) {
+              promises.push(
+                fetch(`/v1/tool-permissions/${existingPermission.id}`, {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ permission_level: permissionLevel }),
+                })
+              );
+            }
+          } else {
+            promises.push(
+              fetch("/v1/tool-permissions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  tool_id: toolId,
+                  client_id: parseInt(clientId, 10),
+                  permission_level: permissionLevel,
+                }),
+              })
+            );
+          }
+        });
+
+        try {
+          const results = await Promise.all(promises);
+          const hasErrors = results.some((res) => !res.ok);
+          if (hasErrors) {
+            throw new Error("One or more permission updates failed.");
+          }
+          alert("Permissions saved successfully!");
+          clientSelect.dispatchEvent(new Event("change"));
+        } catch (err) {
+          alert(`Error saving permissions: ${err.message}`);
+        }
+      });
+
+      updateEngineImplFields();
+      initializePermissionsTab();
+
+      const requestFilterBy = document.getElementById("request-filter-by");
+      const requestFilterValueContainer = document.getElementById(
+        "request-filter-value-container"
+      );
+      const loadRequestsBtn = document.getElementById("load-requests-btn");
+      const requestsListContainer =
+        document.getElementById("tool-requests-list");
+
+      let allClientsForRequests = [];
+      let allToolsForRequests = [];
+
+      async function initializeRequestsTab() {
+        try {
+          const [clientRes, toolRes] = await Promise.all([
+            fetch("/v1/clients"),
+            fetch("/v1/tools"),
+          ]);
+          if (!clientRes.ok) throw new Error("Failed to load clients");
+          if (!toolRes.ok) throw new Error("Failed to load tools");
+
+          allClientsForRequests = await clientRes.json();
+          allToolsForRequests = await toolRes.json();
+
+          updateRequestFilterValue(); // Initial setup
+        } catch (err) {
+          alert(err.message);
+          requestFilterValueContainer.innerHTML = `<span class="text-red-500">Error loading filters</span>`;
+        }
+      }
+
+      function updateRequestFilterValue() {
+        const filterType = requestFilterBy.value;
+        const data =
+          filterType === "client" ? allClientsForRequests : allToolsForRequests;
+
+        let selectHTML = `<label for="request-filter-value" class="block text-sm font-medium text-slate-700">${
+          filterType === "client" ? "Select Client" : "Select Tool"
+        }</label>
+                            <select id="request-filter-value" class="form-input w-64">`;
+
+        data.forEach((item) => {
+          selectHTML += `<option value="${item.id}">${item.name} (ID: ${item.id})</option>`;
+        });
+        selectHTML += `</select>`;
+        requestFilterValueContainer.innerHTML = selectHTML;
+      }
+
+      requestFilterBy.addEventListener("change", updateRequestFilterValue);
+
+      loadRequestsBtn.addEventListener("click", async () => {
+        const filterType = requestFilterBy.value;
+        const filterValue = document.getElementById(
+          "request-filter-value"
+        ).value;
+
+        if (!filterValue) {
+          alert("Please select a value to filter by.");
+          return;
+        }
+
+        requestsListContainer.innerHTML = `<div class="text-center text-slate-500 py-10 border border-dashed rounded-xl">Loading...</div>`;
+
+        try {
+          const res = await fetch(
+            `/v1/tool-requests/${filterType}/${filterValue}`
+          );
+          if (!res.ok)
+            throw new Error(`Failed to fetch requests: ${res.statusText}`);
+          const requests = await res.json();
+          renderToolRequests(requests);
+        } catch (err) {
+          requestsListContainer.innerHTML = `<div class="text-center text-red-500 py-10 border border-dashed rounded-xl">Error loading requests: ${err.message}</div>`;
+        }
+      });
+
+      function renderToolRequests(requests) {
+        requestsListContainer.innerHTML = "";
+
+        if (!requests || requests.length === 0) {
+          requestsListContainer.innerHTML = `<div class="text-center text-slate-500 py-10 border border-dashed rounded-xl">No requests found for this selection.</div>`;
+          return;
+        }
+
+        requests.forEach((request, index) => {
+          const reqEl = document.createElement("div");
+          reqEl.className =
+            "bg-slate-50 border border-slate-200 rounded-xl p-4";
+          reqEl.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-lg font-semibold text-slate-800">Request ID: <span class="font-mono">${
+                          request.id
+                        }</span></p>
+                        <div class="mt-2 space-y-1 text-sm text-slate-600">
+                            <p><span class="font-semibold">Tool ID:</span> <span class="font-mono">${
+                              request.tool_id
+                            }</span></p>
+                            <p><span class="font-semibold">Client ID:</span> <span class="font-mono">${
+                              request.client_id
+                            }</span></p>
+                            <p><span class="font-semibold">Created:</span> ${new Date(
+                              request.created_at
+                            ).toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs px-3 py-1 rounded-full font-bold 
+                            ${
+                              request.status === "success"
+                                ? "bg-green-100 text-green-800"
+                                : request.status === "failed"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-slate-100 text-slate-600"
+                            }">
+                            ${request.status.toUpperCase()}
+                        </span>
+                        <button class="text-sm font-semibold text-blue-600 hover:underline" onclick="toggleToolDetails('request-details-${index}')">View Data</button>
+                        <button class="text-sm font-semibold text-red-600 hover:underline" onclick="deleteToolRequest(${
+                          request.id
+                        })">Delete</button>
+                    </div>
+                </div>
+                <div id="request-details-${index}" class="hidden mt-4 pt-4 border-t border-slate-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-slate-700 mb-2">Request Data</h4>
+                            <pre class="bg-slate-200 rounded-lg p-3 text-xs font-mono overflow-auto">${JSON.stringify(
+                              request.request_data,
+                              null,
+                              2
+                            )}</pre>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-slate-700 mb-2">Response Data</h4>
+                            <pre class="bg-slate-200 rounded-lg p-3 text-xs font-mono overflow-auto">${JSON.stringify(
+                              request.response_data,
+                              null,
+                              2
+                            )}</pre>
+                        </div>
+                    </div>
+                </div>
+              `;
+          requestsListContainer.appendChild(reqEl);
+        });
+      }
+
+      async function deleteToolRequest(requestId) {
+        if (!confirm("Are you sure you want to delete this tool request?")) {
+          return;
+        }
+
+        try {
+          const res = await fetch(`/v1/tool-requests/${requestId}`, {
+            method: "DELETE",
+          });
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(
+              errorData.Msg || `Request failed with status ${res.status}`
+            );
+          }
+          alert("Tool request deleted successfully!");
+          loadRequestsBtn.click(); // Refresh list
+        } catch (err) {
+          alert(`Error deleting tool request: ${err.message}`);
+        }
+      }
+
+      updateEngineImplFields();
+      initializePermissionsTab();
+      initializeRequestsTab();
+
+      // Client Management Functions
+      function showCreateClientModal() {
+        document.getElementById('createClientModal').classList.remove('hidden');
+      }
+
+      function closeCreateClientModal() {
+        document.getElementById('createClientModal').classList.add('hidden');
+        document.getElementById('createClientForm').reset();
+      }
+
+      async function toggleApiKeysView(clientId) {
+        const container = document.getElementById(`api-keys-container-${clientId}`);
+        const isHidden = container.classList.contains('hidden');
+
+        // Close other open containers to keep the UI clean
+        document.querySelectorAll('[id^="api-keys-container-"]').forEach(c => {
+            if (c.id !== `api-keys-container-${clientId}`) {
+                c.classList.add('hidden');
+            }
+        });
+        document.querySelectorAll('[id^="edit-client-container-"]').forEach(c => c.classList.add('hidden'));
+
+        if (isHidden) {
+            // If the container is about to be shown, always load fresh data.
+            await loadApiKeysIntoContainer(clientId, container);
+            container.classList.remove('hidden');
+        } else {
+            // If it's being hidden, just hide it.
+            container.classList.add('hidden');
+        }
+      }
+
+      async function toggleEditClientView(clientId) {
+        const container = document.getElementById(`edit-client-container-${clientId}`);
+        const isHidden = container.classList.contains('hidden');
+
+        // Close other open containers
+        document.querySelectorAll('[id^="edit-client-container-"]').forEach(c => {
+            if (c.id !== `edit-client-container-${clientId}`) {
+                c.classList.add('hidden');
+            }
+        });
+        document.querySelectorAll('[id^="api-keys-container-"]').forEach(c => c.classList.add('hidden'));
+
+        if (isHidden) {
+            try {
+                const res = await fetch(`/v1/clients/${clientId}`);
+                if (!res.ok) throw new Error('Failed to fetch client details');
+                const client = await res.json();
+                
+                container.innerHTML = createEditClientForm(client);
+                container.classList.remove('hidden');
+            } catch (err) {
+                alert(err.message);
+            }
+        } else {
+            container.classList.add('hidden');
+        }
+      }
+
+      function createEditClientForm(client) {
+        const checked = client.is_active ? 'checked' : '';
+        return `
+            <form id="edit-client-form-${client.id}" onsubmit="updateClient(event, ${client.id})">
+                <h4 class="text-lg font-semibold text-slate-800 mb-4">Edit Client</h4>
+                <div class="space-y-4">
+                    <div>
+                        <label for="edit-client-name-${client.id}" class="block text-sm font-medium text-slate-700">Name</label>
+                        <input type="text" id="edit-client-name-${client.id}" class="form-input" value="${client.name}" required>
+                    </div>
+                    <div>
+                        <label for="edit-client-identifier-${client.id}" class="block text-sm font-medium text-slate-700">Identifier</label>
+                        <input type="text" id="edit-client-identifier-${client.id}" class="form-input" value="${client.client_identifier}" required>
+                    </div>
+                    <div>
+                        <label for="edit-client-active-${client.id}" class="flex items-center justify-between cursor-pointer">
+                            <span class="text-sm font-medium text-slate-700">Active Status</span>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                                <input type="checkbox" id="edit-client-active-${client.id}" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-2 appearance-none cursor-pointer transition-transform duration-200 ease-in-out" ${checked}/>
+                                <label for="edit-client-active-${client.id}" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="document.getElementById('edit-client-container-${client.id}').classList.add('hidden')" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-800 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Save Changes</button>
+                </div>
+            </form>
+        `;
+      }
+
+      async function updateClient(event, clientId) {
+        event.preventDefault();
+
+        const name = document.getElementById(`edit-client-name-${clientId}`).value;
+        const identifier = document.getElementById(`edit-client-identifier-${clientId}`).value;
+        const isActive = document.getElementById(`edit-client-active-${clientId}`).checked;
+
+        const payload = {
+            name: name,
+            client_identifier: identifier,
+            is_active: isActive
+        };
+
+        try {
+            const res = await fetch(`/v1/clients/${clientId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.Msg || 'Failed to update client');
+            }
+
+            alert('Client updated successfully!');
+            document.getElementById('loadBtn').click();
+        } catch (err) {
+            alert('Error updating client: ' + err.message);
+        }
+      }
+
+      async function loadApiKeysIntoContainer(clientId, container) {
+        container.innerHTML = `<p class="text-slate-500 p-4">Loading API keys...</p>`;
+        try {
+            const res = await fetch(`/v1/clients/${clientId}/api-keys`);
+            if (!res.ok) throw new Error('Failed to load API keys');
+            const apiKeys = await res.json();
+
+            let content = `
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-lg font-semibold text-slate-800">API Keys</h4>
+                    <button onclick="createApiKey(${clientId})" class="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 text-sm font-semibold">
+                        + New API Key
+                    </button>
+                </div>
+                <div class="space-y-3">
+            `;
+
+            if (!apiKeys || apiKeys.length === 0) {
+                content += '<p class="text-slate-500 text-center py-4">No API keys found for this client.</p>';
+            } else {
+                apiKeys.forEach(key => {
+                    content += `
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p id="api-key-text-${key.id}" class="font-mono text-sm break-all">${key.api_key}</p>
+                                    <p class="text-xs text-slate-500 mt-1">Created: ${new Date(key.created_at).toLocaleString()}</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="copyApiKey(this, '${key.api_key}')" class="text-slate-500 hover:text-blue-600 p-1 rounded-full" title="Copy API Key">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2z"></path></svg>
+                                    </button>
+                                    <button onclick="deleteApiKey(${clientId}, ${key.id})" class="text-red-500 hover:text-red-700 p-1 rounded-full" title="Delete API Key">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            content += `</div>`;
+            container.innerHTML = content;
+
+        } catch (err) {
+            container.innerHTML = `<p class="text-red-500 p-4">Error loading API keys: ${err.message}</p>`;
+        }
+      }
+
+      function copyApiKey(buttonElement, apiKey) {
+        navigator.clipboard.writeText(apiKey).then(() => {
+            const originalContent = buttonElement.innerHTML;
+            buttonElement.disabled = true;
+            buttonElement.innerHTML = `
+                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            `;
+            setTimeout(() => {
+                buttonElement.innerHTML = originalContent;
+                buttonElement.disabled = false;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy API key: ', err);
+            alert('Failed to copy API key.');
+        });
+      }
+
+      async function createApiKey(clientId) {
+        try {
+          const res = await fetch(`/v1/clients/${clientId}/api-keys`, { method: 'POST' });
+          if (!res.ok) throw new Error('Failed to create API key');
+          
+          const container = document.getElementById(`api-keys-container-${clientId}`);
+          await loadApiKeysIntoContainer(clientId, container);
+
+        } catch (err) {
+          alert('Error creating API key: ' + err.message);
+        }
+      }
+
+      async function deleteApiKey(clientId, keyId) {
+        if (!confirm('Are you sure you want to delete this API key?')) return;
+        
+        try {
+          const res = await fetch(`/v1/clients/${clientId}/api-keys/${keyId}`, { method: 'DELETE' });
+          if (!res.ok) throw new Error('Failed to delete API key');
+
+          const container = document.getElementById(`api-keys-container-${clientId}`);
+          await loadApiKeysIntoContainer(clientId, container);
+
+        } catch (err) {
+          alert('Error deleting API key: ' + err.message);
+        }
+      }
+
+      document.getElementById('createClientBtn').addEventListener('click', showCreateClientModal);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+services:
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: atp-central-database
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "${DATABASE_EXTERNAL_PORT}:5432"
+    volumes:
+      - atp-central-db-volume:/var/lib/postgresql/data
+    networks:
+      - atp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  router-core:
+    build:
+      context: ./router-core
+      dockerfile: Dockerfile
+    container_name: atp-central-router-core
+    ports:
+      - "${ROUTER_CORE_EXTERNAL_PORT}:${ROUTER_CORE_PORT}"
+    depends_on:
+      database:
+        condition: service_healthy
+      selector:
+        condition: service_started
+    environment:
+      ENV: ${ROUTER_CORE_ENV}
+      HOST: ${ROUTER_CORE_HOST}
+      PORT: ${ROUTER_CORE_PORT}
+      EXTERNAL_PORT: ${ROUTER_CORE_EXTERNAL_PORT}
+      RUN_MODE: ${ROUTER_CORE_RUN_MODE}
+      MAIN_DB_CONNECTION: ${MAIN_DB_CONNECTION}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      SELECTOR_SERVICE_URL: ${SELECTOR_URL}
+    networks:
+      - atp-network
+    restart: unless-stopped
+
+  selector:
+    build:
+      context: ./selector
+      dockerfile: Dockerfile
+    container_name: atp-central-selector
+    ports:
+      - "${SELECTOR_EXTERNAL_PORT}:${SELECTOR_PORT}"
+    environment:
+      ENV: ${SELECTOR_ENV}
+      HOST: ${SELECTOR_HOST}
+      PORT: ${SELECTOR_PORT}
+      RUN_MODE: ${SELECTOR_RUN_MODE}
+      HUGGINGFACE_TOKEN: ${HUGGINGFACE_TOKEN}
+      MAIN_DB_CONNECTION: ${MAIN_DB_CONNECTION}
+      LLM_PROVIDER: ${LLM_PROVIDER}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL}
+    networks:
+      - atp-network
+    restart: unless-stopped
+
+volumes:
+  atp-central-db-volume:
+    driver: local
+
+networks:
+  atp-network:
+    driver: bridge
+    name: atp-central-network

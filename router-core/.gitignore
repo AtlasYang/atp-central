@@ -1,0 +1,6 @@
+# generated files
+_docs
+
+# local development files
+.env.*
+.*.sh
