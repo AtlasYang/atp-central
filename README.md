@@ -10,7 +10,7 @@ Group A:
 
 - Yang Gil Mo - [AtlasYang](https://github.com/AtlasYang)
 - Khinwaiyan - [khinwaiyan](https://github.com/khinwaiyan)
-- Kin Da In - [dida0423](https://github.com/dida0423)
+- Kim Da In - [dida0423](https://github.com/dida0423)
 
 ## Introduction
 
