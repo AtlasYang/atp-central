@@ -130,3 +130,115 @@ For production cloud deployment:
 4. **Load Balancing**: Configure Application Load Balancer for high availability
 
 Environment variables and detailed deployment scripts are provided in each component directory.
+
+### Fine-tune strategy
+
+Selector server uses fine-tuned LoRA adapter to enhance inference accuracy & create more precise answer structure. Below section guides you how to properly fine-tune open-source LLM model for Selector service.
+
+#### Dataset Preparation
+
+Create a dedicated directory for fine-tuning (e.g., `fine-tuning/`) and prepare two types of CSV datasets:
+
+**Tool Registry Dataset (`ai_tools.csv`)**
+```csv
+intended_tool_name,description,use_cases,keywords
+DrugAI_0001,Repurposes existing drugs through random forest models-based analysis of drug-disease relationships.,"['Repurposing antiviral drugs for cancer.', 'Repurposing antiviral drugs for diabetes.']","['network propagation', 'disease mapping', 'drug repurposing']"
+```
+
+**User Prompt Dataset (`ai_tool_user_prompts_dataset_en.csv`)**
+```csv
+intended_tool_name,user_prompt
+ChemMining,I'm trying to accomplish Identification of hit compounds for pharmacological chaperones. — any tool recommendations?
+ChemMining,Any suggestions for tools specializing in deep learning?
+```
+
+**Directory Structure**
+```
+fine-tuning/
+├── datasets/
+│   ├── ai_tools.csv
+│   ├── ai_tool_user_prompts_dataset_en.csv
+│   └── ai_tool_user_prompts_dataset_ko.csv (optional)
+├── train.py
+└── test.py
+```
+
+#### Training Approach
+
+**RAG-Enhanced Tool Selection**
+- **Base Model**: LLaMA-3.1-8B-Instruct
+- **Training Format**: Context-aware selection with tool descriptions
+- **Features**: Includes negative sampling for improved discrimination
+- **Use Case**: Sophisticated tool selection with detailed reasoning
+
+```python
+# Example RAG training format
+user_content = f"{instruction}\n\n{context_with_available_tools}"
+messages = [
+    {"role": "user", "content": user_content},
+    {"role": "assistant", "content": correct_tool_name}
+]
+```
+
+The training process combines user prompts with available tool descriptions, allowing the model to make informed decisions based on context rather than simple pattern matching.
+
+#### Training Configuration
+
+**LoRA Parameters**
+- `r=16`: Low-rank adaptation rank
+- `lora_alpha=32`: LoRA scaling parameter
+- `lora_dropout=0.05`: Dropout rate for regularization
+- **Target Modules**: All attention and MLP layers
+
+**Training Parameters**
+- **Epochs**: 3
+- **Batch Size**: 4 per device
+- **Learning Rate**: 2e-4 with cosine scheduler
+- **Optimizer**: PagedAdamW with 8-bit quantization
+- **Precision**: BFloat16 for memory efficiency
+
+#### Production Deployment
+
+Fine-tuned adapters are automatically saved to output directories (e.g., `sft-final-adapter/`, `sft-output/`). To deploy:
+
+1. Copy the trained adapter to your Selector service directory
+2. Update the `adapter_path` in your Selector service configuration
+3. Restart the Selector service to load the new adapter
+
+The fine-tuned model maintains the same inference API while providing significantly improved tool selection accuracy.
+
+> **Note**: The training scripts and datasets mentioned in this guide should be created separately as they are not included in this repository. Refer to the configuration parameters and examples above to implement your own fine-tuning pipeline.
+
+### Navigating the Application
+
+The Router-Core server provides a convenient admin console application at `/console`.
+
+**Clients management**
+
+![](screenshots/admin-clients.png)
+
+- Register new clients.
+- Manage API Key that allows each client to access tools.
+
+**Tool Management**
+
+![](screenshots/admin-tool-list.png)
+
+- Check details of registered tools.
+
+**Tool Registration**
+
+![](screenshots/admin-tool-registration.png)
+
+- Register new tools using pre-defined infrastructure information.
+- Specify AWS Lambda function name to successfully invoke externel tool.
+
+**Permissions**
+
+![](screenshots/admin-permission.png)
+
+- Administrator can assign specific permissions to each clients.
+- Permissions
+`Write`: Client can read tool information, request / response data, create new reqeust.
+`Read`: Client can only read tool information, request / response data.
+`None`: Client are not allowed to access the tool.
